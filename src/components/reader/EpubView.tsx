@@ -123,6 +123,11 @@ const EpubView = forwardRef<ViewHandle, ViewProps>(function EpubView(
     next: () => renditionRef.current?.next(),
     prev: () => renditionRef.current?.prev(),
     goTo: (href: string) => renditionRef.current?.display(href),
+    goToPercent: (pct: number) => {
+      const book = bookRef.current;
+      if (!book?.locations?.length()) return;
+      renditionRef.current?.display(book.locations.cfiFromPercentage(pct));
+    },
     currentLocation: () => renditionRef.current?.currentLocation()?.start?.cfi ?? "",
     scrollBy: (px: number) => {
       const doc = renditionRef.current?.getContents?.()?.[0]?.document;

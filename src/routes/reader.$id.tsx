@@ -356,12 +356,7 @@ function ReaderPage() {
                 min={0}
                 max={100}
                 value={[Math.round(progress * 100)]}
-                onValueChange={(vals) => {
-                  if (book?.format === "pdf") viewRef.current?.goTo(String(Math.max(1, vals[0] ?? 1)));
-                }}
-                onValueCommit={(vals) => {
-                  if (book?.format === "txt") viewRef.current?.goTo(String(vals[0] ?? 0));
-                }}
+                onValueCommit={(vals) => viewRef.current?.goToPercent?.((vals[0] ?? 0) / 100)}
               />
               <span className="w-12 text-[11px] text-muted-foreground">{pageLabel}</span>
             </div>

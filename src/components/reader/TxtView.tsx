@@ -98,6 +98,12 @@ const TxtView = forwardRef<ViewHandle, ViewProps>(function TxtView(
       else if (scrollerRef.current)
         scrollerRef.current.scrollTop = pct * scrollerRef.current.scrollHeight;
     },
+    goToPercent: (pct: number) => {
+      if (paged) setOffset(Math.round(pct * Math.max(totalPages - 1, 0)));
+      else if (scrollerRef.current)
+        scrollerRef.current.scrollTop =
+          pct * (scrollerRef.current.scrollHeight - scrollerRef.current.clientHeight);
+    },
     currentLocation: () => {
       if (paged) return String(Math.floor((offset / Math.max(totalPages - 1, 1)) * text.length));
       const s = scrollerRef.current;

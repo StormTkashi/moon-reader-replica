@@ -14,6 +14,7 @@ export interface ViewHandle {
   next: () => void;
   prev: () => void;
   goTo: (href: string) => void;
+  goToPercent?: (pct: number) => void;
   search: (query: string) => Promise<SearchHit[]>;
   currentLocation: () => string;
   scrollBy?: (px: number) => void;

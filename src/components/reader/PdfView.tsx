@@ -92,6 +92,8 @@ const PdfView = forwardRef<ViewHandle, ViewProps>(function PdfView(
     next: () => go(1),
     prev: () => go(-1),
     goTo: (href: string) => setPage(Math.min(Math.max(Number(href) || 1, 1), total || 1)),
+    goToPercent: (pct: number) =>
+      setPage(Math.min(Math.max(Math.round(pct * (total || 1)), 1), total || 1)),
     currentLocation: () => String(page),
     scrollBy: (px: number) => containerRef.current?.scrollBy(0, px),
     search: async (query: string) => {
