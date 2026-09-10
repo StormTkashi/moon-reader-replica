@@ -1,0 +1,13 @@
+{
+  "name": "Lumen Reader",
+  "short_name": "Lumen",
+  "description": "Leitor de EPUB, PDF e TXT com temas, marcações e estatísticas.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1b1d23",
+  "theme_color": "#1b1d23",
+  "orientation": "portrait",
+  "icons": [
+    { "src": "/favicon.ico", "sizes": "48x48", "type": "image/x-icon" }
+  ]
+}
