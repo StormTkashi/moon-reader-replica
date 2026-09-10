@@ -191,7 +191,7 @@ function ReaderPage() {
           break;
         case "theme": {
           const idx = READER_THEMES.findIndex((t) => t.id === settings.themeId);
-          settings.set({ themeId: READER_THEMES[(idx + 1) % READER_THEMES.length].id });
+          settings.set({ themeId: READER_THEMES[(idx + 1) % READER_THEMES.length]!.id });
           break;
         }
         default:
@@ -356,11 +356,11 @@ function ReaderPage() {
                 min={0}
                 max={100}
                 value={[Math.round(progress * 100)]}
-                onValueChange={([v]) => {
-                  if (book?.format === "pdf") viewRef.current?.goTo(String(Math.max(1, v)));
+                onValueChange={(vals) => {
+                  if (book?.format === "pdf") viewRef.current?.goTo(String(Math.max(1, vals[0] ?? 1)));
                 }}
-                onValueCommit={([v]) => {
-                  if (book?.format === "txt") viewRef.current?.goTo(String(v));
+                onValueCommit={(vals) => {
+                  if (book?.format === "txt") viewRef.current?.goTo(String(vals[0] ?? 0));
                 }}
               />
               <span className="w-12 text-[11px] text-muted-foreground">{pageLabel}</span>

@@ -45,7 +45,7 @@ function SettingsPage() {
             max={180}
             step={5}
             value={[s.dailyGoalMinutes]}
-            onValueChange={([v]) => s.set({ dailyGoalMinutes: v })}
+            onValueChange={(vals) => s.set({ dailyGoalMinutes: vals[0] ?? 0 })}
           />
         </div>
       </main>

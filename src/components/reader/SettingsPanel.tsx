@@ -108,7 +108,7 @@ export function SettingsPanel() {
             min={20}
             max={100}
             value={[s.brightness * 100]}
-            onValueChange={([v]) => s.set({ brightness: v / 100 })}
+            onValueChange={(vals) => s.set({ brightness: (vals[0] ?? 0) / 100 })}
           />
         </Row>
       </TabsContent>
@@ -144,7 +144,7 @@ export function SettingsPanel() {
             min={10}
             max={26}
             value={[s.lineHeight * 10]}
-            onValueChange={([v]) => s.set({ lineHeight: v / 10 })}
+            onValueChange={(vals) => s.set({ lineHeight: (vals[0] ?? 0) / 10 })}
           />
         </Row>
         <Row label={`Margens ${s.margin}px`}>
@@ -153,7 +153,7 @@ export function SettingsPanel() {
             min={0}
             max={72}
             value={[s.margin]}
-            onValueChange={([v]) => s.set({ margin: v })}
+            onValueChange={(vals) => s.set({ margin: vals[0] ?? 0 })}
           />
         </Row>
         <Row label={`Espaço entre letras ${s.letterSpacing}px`}>
@@ -163,7 +163,7 @@ export function SettingsPanel() {
             max={4}
             step={0.5}
             value={[s.letterSpacing]}
-            onValueChange={([v]) => s.set({ letterSpacing: v })}
+            onValueChange={(vals) => s.set({ letterSpacing: vals[0] ?? 0 })}
           />
         </Row>
         <Row label="Justificar">
@@ -210,7 +210,7 @@ export function SettingsPanel() {
             min={5}
             max={120}
             value={[s.autoScrollSpeed]}
-            onValueChange={([v]) => s.set({ autoScrollSpeed: v })}
+            onValueChange={(vals) => s.set({ autoScrollSpeed: vals[0] ?? 0 })}
           />
         </Row>
         <Row label="Barra de status na leitura">

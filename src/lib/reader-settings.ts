@@ -116,9 +116,9 @@ export function resolveTheme(s: ReaderSettings) {
       dark: true,
     };
   }
-  return READER_THEMES.find((t) => t.id === s.themeId) ?? READER_THEMES[0];
+  return READER_THEMES.find((t) => t.id === s.themeId) ?? READER_THEMES[0]!;
 }
 
 export function fontCss(id: string) {
-  return FONT_FAMILIES.find((f) => f.id === id)?.css ?? FONT_FAMILIES[0].css;
+  return FONT_FAMILIES.find((f) => f.id === id)?.css ?? FONT_FAMILIES[0]!.css;
 }

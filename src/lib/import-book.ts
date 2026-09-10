@@ -46,7 +46,7 @@ async function pdfMeta(file: File) {
   } catch {
     cover = undefined;
   }
-  await doc.destroy();
+  await (doc as unknown as { destroy?: () => Promise<void> }).destroy?.();
   return { title: info?.Title, author: info?.Author, cover };
 }
 
@@ -88,7 +88,7 @@ export async function importFile(file: File): Promise<BookMeta | null> {
     title,
     author,
     format,
-    cover,
+    ...(cover ? { cover } : {}),
     addedAt: Date.now(),
     lastOpenedAt: 0,
     progress: 0,
