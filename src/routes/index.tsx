@@ -115,86 +115,89 @@ function Library() {
   const continueBook = visible.find((b) => b.progress > 0 && !b.finished);
 
   return (
-    <div className="min-h-screen bg-background pb-20">
-      <header className="sticky top-0 z-20 border-b border-border bg-background/95 px-4 pb-3 pt-4 backdrop-blur">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <BookOpen className="h-6 w-6 text-primary" />
-            <h1 className="text-xl font-semibold tracking-tight">Lumen Reader</h1>
+    <AppShell
+      title="Minha estante"
+      actions={
+        <Button size="sm" onClick={() => inputRef.current?.click()}>
+          <Plus className="mr-1 h-4 w-4" /> Adicionar
+        </Button>
+      }
+      subheader={
+        <>
+          <div className="mt-3 flex items-center gap-2">
+            <div className="relative flex-1">
+              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Buscar por título ou autor"
+                className="pl-8"
+              />
+            </div>
+            <Select value={sort} onValueChange={(v) => setSort(v as SortBy)}>
+              <SelectTrigger className="w-[130px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="recent">Recentes</SelectItem>
+                <SelectItem value="added">Adicionados</SelectItem>
+                <SelectItem value="title">Título</SelectItem>
+                <SelectItem value="author">Autor</SelectItem>
+                <SelectItem value="progress">Progresso</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
-          <Button size="sm" onClick={() => inputRef.current?.click()}>
-            <Plus className="mr-1 h-4 w-4" /> Adicionar
-          </Button>
-        </div>
-        <div className="mt-3 flex items-center gap-2">
-          <div className="relative flex-1">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Buscar por título ou autor"
-              className="pl-8"
-            />
-          </div>
-          <Select value={sort} onValueChange={(v) => setSort(v as SortBy)}>
-            <SelectTrigger className="w-[130px]">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="recent">Recentes</SelectItem>
-              <SelectItem value="added">Adicionados</SelectItem>
-              <SelectItem value="title">Título</SelectItem>
-              <SelectItem value="author">Autor</SelectItem>
-              <SelectItem value="progress">Progresso</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="mt-3 flex items-center gap-2">
-          <Tabs value={tab} onValueChange={setTab} className="flex-1">
-            <TabsList className="w-full">
-              <TabsTrigger value="all" className="flex-1">
-                Todos
-              </TabsTrigger>
-              <TabsTrigger value="reading" className="flex-1">
-                Lendo
-              </TabsTrigger>
-              <TabsTrigger value="finished" className="flex-1">
-                Terminados
-              </TabsTrigger>
-            </TabsList>
-          </Tabs>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setView(view === "grid" ? "list" : "grid")}
-          >
-            {view === "grid" ? "Lista" : "Capas"}
-          </Button>
-        </div>
-        {tags.length > 0 && (
-          <div className="no-scrollbar mt-2 flex gap-2 overflow-x-auto">
-            <button
-              onClick={() => setTag(null)}
-              className={`shrink-0 rounded-full border px-3 py-1 text-xs ${
-                tag === null ? "border-primary text-primary" : "border-border text-muted-foreground"
-              }`}
+          <div className="mt-3 flex items-center gap-2">
+            <Tabs value={tab} onValueChange={setTab} className="flex-1">
+              <TabsList className="w-full">
+                <TabsTrigger value="all" className="flex-1">
+                  Todos
+                </TabsTrigger>
+                <TabsTrigger value="reading" className="flex-1">
+                  Lendo
+                </TabsTrigger>
+                <TabsTrigger value="finished" className="flex-1">
+                  Terminados
+                </TabsTrigger>
+              </TabsList>
+            </Tabs>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setView(view === "grid" ? "list" : "grid")}
             >
-              Todas as etiquetas
-            </button>
-            {tags.map((t) => (
+              {view === "grid" ? "Lista" : "Capas"}
+            </Button>
+          </div>
+          {tags.length > 0 && (
+            <div className="no-scrollbar mt-2 flex gap-2 overflow-x-auto">
               <button
-                key={t}
-                onClick={() => setTag(t === tag ? null : t)}
+                onClick={() => setTag(null)}
                 className={`shrink-0 rounded-full border px-3 py-1 text-xs ${
-                  tag === t ? "border-primary text-primary" : "border-border text-muted-foreground"
+                  tag === null
+                    ? "border-primary text-primary"
+                    : "border-border text-muted-foreground"
                 }`}
               >
-                {t}
+                Todas as etiquetas
               </button>
-            ))}
-          </div>
-        )}
-      </header>
+              {tags.map((t) => (
+                <button
+                  key={t}
+                  onClick={() => setTag(t === tag ? null : t)}
+                  className={`shrink-0 rounded-full border px-3 py-1 text-xs ${
+                    tag === t ? "border-primary text-primary" : "border-border text-muted-foreground"
+                  }`}
+                >
+                  {t}
+                </button>
+              ))}
+            </div>
+          )}
+        </>
+      }
+    >
+
 
       <input
         ref={inputRef}
