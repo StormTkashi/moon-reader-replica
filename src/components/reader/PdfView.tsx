@@ -77,7 +77,7 @@ const PdfView = forwardRef<ViewHandle, ViewProps>(function PdfView(
       canvas.height = viewport.height;
       canvas.style.width = `${viewport.width / 2}px`;
       const ctx = canvas.getContext("2d")!;
-      await p.render({ canvas, canvasContext: ctx, viewport }).promise;
+      await p.render({ canvasContext: ctx, viewport }).promise;
       onProgressRef.current(doc.numPages ? page / doc.numPages : 0, String(page), `${page}/${doc.numPages}`);
     })();
     return () => {

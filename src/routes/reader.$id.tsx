@@ -50,6 +50,8 @@ const TxtView = lazy(() => import("@/components/reader/TxtView"));
 
 export const Route = createFileRoute("/reader/$id")({
   ssr: false,
+  validateSearch: (search: Record<string, unknown>): { loc?: string } =>
+    typeof search['loc'] === "string" ? { loc: search['loc'] as string } : {},
   head: () => ({
     meta: [
       { title: "Leitura — Lumen Reader" },
@@ -71,6 +73,7 @@ const HIGHLIGHT_COLORS: { id: HighlightColor; hex: string }[] = [
 
 function ReaderPage() {
   const { id } = Route.useParams();
+  const { loc } = Route.useSearch();
   const navigate = useNavigate();
   const settings = useReaderSettings();
   const theme = resolveTheme(settings);
@@ -294,7 +297,7 @@ function ReaderPage() {
             <ViewComponent
               ref={viewRef}
               blob={blob}
-              initialLocation={book.location}
+              initialLocation={loc || book.location}
               onProgress={onProgress}
               onToc={setToc}
               onTap={(zone) =>

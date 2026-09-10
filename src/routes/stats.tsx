@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { BottomNav } from "@/components/BottomNav";
+import { AppShell } from "@/components/AppShell";
 import { listBooks, listSessions, todayKey, type BookMeta, type ReadingSession } from "@/lib/db";
 import { useReaderSettings } from "@/lib/reader-settings";
 
@@ -68,10 +68,7 @@ function StatsPage() {
   const max = Math.max(...last14.map((d) => d.minutes), goal, 1);
 
   return (
-    <div className="min-h-screen bg-background pb-24">
-      <header className="border-b border-border px-4 py-4">
-        <h1 className="text-xl font-semibold tracking-tight">Estatísticas</h1>
-      </header>
+    <AppShell title="Estatísticas">
       <main className="mx-auto max-w-2xl space-y-4 px-4 py-4">
         <div className="grid grid-cols-2 gap-3">
           <Card label="Hoje" value={`${todayMinutes} min`} sub={`meta ${goal} min`} />
@@ -128,8 +125,7 @@ function StatsPage() {
           </ul>
         </section>
       </main>
-      <BottomNav />
-    </div>
+    </AppShell>
   );
 }
 

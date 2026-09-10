@@ -10,6 +10,9 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as FilesRouteImport } from './routes/files'
+import { Route as LibraryRouteImport } from './routes/library'
+import { Route as MarksRouteImport } from './routes/marks'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as StatsRouteImport } from './routes/stats'
 import { Route as ReaderIdRouteImport } from './routes/reader.$id'
@@ -17,6 +20,21 @@ import { Route as ReaderIdRouteImport } from './routes/reader.$id'
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FilesRoute = FilesRouteImport.update({
+  id: '/files',
+  path: '/files',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LibraryRoute = LibraryRouteImport.update({
+  id: '/library',
+  path: '/library',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MarksRoute = MarksRouteImport.update({
+  id: '/marks',
+  path: '/marks',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SettingsRoute = SettingsRouteImport.update({
@@ -37,12 +55,18 @@ const ReaderIdRoute = ReaderIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/files': typeof FilesRoute
+  '/library': typeof LibraryRoute
+  '/marks': typeof MarksRoute
   '/settings': typeof SettingsRoute
   '/stats': typeof StatsRoute
   '/reader/$id': typeof ReaderIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/files': typeof FilesRoute
+  '/library': typeof LibraryRoute
+  '/marks': typeof MarksRoute
   '/settings': typeof SettingsRoute
   '/stats': typeof StatsRoute
   '/reader/$id': typeof ReaderIdRoute
@@ -50,20 +74,48 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/files': typeof FilesRoute
+  '/library': typeof LibraryRoute
+  '/marks': typeof MarksRoute
   '/settings': typeof SettingsRoute
   '/stats': typeof StatsRoute
   '/reader/$id': typeof ReaderIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/settings' | '/stats' | '/reader/$id'
+  fullPaths:
+    | '/'
+    | '/files'
+    | '/library'
+    | '/marks'
+    | '/settings'
+    | '/stats'
+    | '/reader/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/settings' | '/stats' | '/reader/$id'
-  id: '__root__' | '/' | '/settings' | '/stats' | '/reader/$id'
+  to:
+    | '/'
+    | '/files'
+    | '/library'
+    | '/marks'
+    | '/settings'
+    | '/stats'
+    | '/reader/$id'
+  id:
+    | '__root__'
+    | '/'
+    | '/files'
+    | '/library'
+    | '/marks'
+    | '/settings'
+    | '/stats'
+    | '/reader/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  FilesRoute: typeof FilesRoute
+  LibraryRoute: typeof LibraryRoute
+  MarksRoute: typeof MarksRoute
   SettingsRoute: typeof SettingsRoute
   StatsRoute: typeof StatsRoute
   ReaderIdRoute: typeof ReaderIdRoute
@@ -76,6 +128,27 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/files': {
+      id: '/files'
+      path: '/files'
+      fullPath: '/files'
+      preLoaderRoute: typeof FilesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/library': {
+      id: '/library'
+      path: '/library'
+      fullPath: '/library'
+      preLoaderRoute: typeof LibraryRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/marks': {
+      id: '/marks'
+      path: '/marks'
+      fullPath: '/marks'
+      preLoaderRoute: typeof MarksRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/settings': {
@@ -104,6 +177,9 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  FilesRoute: FilesRoute,
+  LibraryRoute: LibraryRoute,
+  MarksRoute: MarksRoute,
   SettingsRoute: SettingsRoute,
   StatsRoute: StatsRoute,
   ReaderIdRoute: ReaderIdRoute,
