@@ -48,21 +48,31 @@ const TxtView = forwardRef<ViewHandle, ViewProps>(function TxtView(
 
   // mede paginação
   useEffect(() => {
-    const el = contentRef.current;
     const host = scrollerRef.current;
-    if (!el || !host || !text) return;
-    const measure = () => {
-      const w = host.clientWidth;
-      setPageWidth(w);
-      setTotalPages(Math.max(1, Math.ceil(el.scrollWidth / w)));
-    };
-    const raf = requestAnimationFrame(measure);
+    if (!host) return;
+    const measure = () => setPageWidth(host.clientWidth);
+    measure();
     window.addEventListener("resize", measure);
-    return () => {
-      cancelAnimationFrame(raf);
-      window.removeEventListener("resize", measure);
-    };
-  }, [text, settings.fontSize, settings.lineHeight, settings.margin, settings.fontFamily, paged]);
+    return () => window.removeEventListener("resize", measure);
+  }, [text]);
+
+  useEffect(() => {
+    const el = contentRef.current;
+    if (!el || !text || !pageWidth || !paged) return;
+    const id = requestAnimationFrame(() =>
+      setTotalPages(Math.max(1, Math.round(el.scrollWidth / pageWidth))),
+    );
+    return () => cancelAnimationFrame(id);
+  }, [
+    text,
+    pageWidth,
+    paged,
+    settings.fontSize,
+    settings.lineHeight,
+    settings.margin,
+    settings.fontFamily,
+    settings.letterSpacing,
+  ]);
 
   // restaura posição inicial
   const restored = useRef(false);
