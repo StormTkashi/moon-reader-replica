@@ -50,9 +50,8 @@ const TxtView = lazy(() => import("@/components/reader/TxtView"));
 
 export const Route = createFileRoute("/reader/$id")({
   ssr: false,
-  validateSearch: (search: Record<string, unknown>) => ({
-    loc: typeof search['loc'] === "string" ? (search['loc'] as string) : undefined,
-  }),
+  validateSearch: (search: Record<string, unknown>): { loc?: string } =>
+    typeof search['loc'] === "string" ? { loc: search['loc'] as string } : {},
   head: () => ({
     meta: [
       { title: "Leitura — Lumen Reader" },

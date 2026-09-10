@@ -119,7 +119,6 @@ function MarksPage() {
                             <div className="min-w-0">
                               <p className="truncate text-sm">{b.label || "Marcador"}</p>
                               <p className="text-xs text-muted-foreground">
-                                {Math.round(b.percent * 100)}% ·{" "}
                                 {new Date(b.createdAt).toLocaleDateString("pt-BR")}
                               </p>
                             </div>
