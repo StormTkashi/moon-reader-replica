@@ -631,7 +631,7 @@ function ReaderPage() {
       <Sheet open={panel === "settings"} onOpenChange={(o) => setPanel(o ? "settings" : null)}>
         <SheetContent side="bottom" className="max-h-[80vh] overflow-y-auto">
           <SheetHeader>
-            <SheetTitle>Ajustes de leitura</SheetTitle>
+            <SheetTitle>Configurações de leitura</SheetTitle>
           </SheetHeader>
           <div className="px-4 pb-8">
             <SettingsPanel />
