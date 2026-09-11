@@ -23,21 +23,21 @@ export function CoverPicker({
       <Cover book={book} className={className} />
       {!book.cover && (
         <>
-          <button
-            type="button"
+          <span
+            role="button"
+            tabIndex={0}
             aria-label={`Adicionar capa de ${book.title}`}
-            disabled={busy}
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
-              inputRef.current?.click();
+              if (!busy) inputRef.current?.click();
             }}
             className="absolute inset-0 flex items-center justify-center rounded-md bg-background/45 transition hover:bg-background/60"
           >
             <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground shadow">
               <Plus className="h-5 w-5" />
             </span>
-          </button>
+          </span>
           <input
             ref={inputRef}
             type="file"
