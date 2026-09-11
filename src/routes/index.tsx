@@ -60,7 +60,6 @@ function Library() {
   const [tab, setTab] = useState("all");
   const [tag, setTag] = useState<string | null>(null);
   const [view, setView] = useState<"grid" | "list">("grid");
-  const inputRef = useRef<HTMLInputElement>(null);
 
   const refresh = useCallback(async () => setBooks(await listBooks()), []);
 
@@ -93,22 +92,6 @@ function Library() {
     };
     return list.sort(cmp[sort]);
   }, [books, query, tab, tag, sort]);
-
-  async function handleFiles(files: FileList | null) {
-    if (!files?.length) return;
-    let ok = 0;
-    for (const file of Array.from(files)) {
-      try {
-        const book = await importFile(file);
-        if (book) ok++;
-        else toast.error(`Formato não suportado: ${file.name}`);
-      } catch {
-        toast.error(`Não consegui abrir ${file.name}`);
-      }
-    }
-    if (ok) toast.success(`${ok} livro(s) adicionado(s)`);
-    await refresh();
-  }
 
   const continueBook = visible.find((b) => b.progress > 0 && !b.finished);
 
