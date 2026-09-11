@@ -379,8 +379,6 @@ function ReaderPage() {
           }}
         />
       )}
-      <div className="hidden">
-      </div>
 
 
       {settings.showStatusBar && !chrome && (
