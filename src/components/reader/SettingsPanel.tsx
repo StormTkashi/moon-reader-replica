@@ -198,6 +198,7 @@ export function SettingsPanel() {
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
+              <SelectItem value="curl">Folhagem (virar página)</SelectItem>
               <SelectItem value="slide">Deslizar</SelectItem>
               <SelectItem value="fade">Esmaecer</SelectItem>
               <SelectItem value="none">Sem animação</SelectItem>
