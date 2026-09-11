@@ -192,7 +192,7 @@ export function SettingsPanel() {
         <Row label="Animação de virada">
           <Select
             value={s.animation}
-            onValueChange={(v) => s.set({ animation: v as "slide" | "fade" | "none" })}
+            onValueChange={(v) => s.set({ animation: v as "curl" | "slide" | "fade" | "none" })}
           >
             <SelectTrigger className="w-44">
               <SelectValue />
