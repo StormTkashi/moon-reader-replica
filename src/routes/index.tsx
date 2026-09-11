@@ -30,7 +30,6 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { deleteBook, listBooks, updateBook, type BookMeta } from "@/lib/db";
-import { importFile } from "@/lib/import-book";
 
 export const Route = createFileRoute("/")({
   head: () => ({
