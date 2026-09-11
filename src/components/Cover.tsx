@@ -20,7 +20,7 @@ export function CoverPicker({
 
   return (
     <div className="relative">
-      <Cover book={book} className={className} />
+      <Cover book={book} {...(className ? { className } : {})} />
       {!book.cover && (
         <>
           <span
