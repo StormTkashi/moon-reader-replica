@@ -25,6 +25,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Slider } from "@/components/ui/slider";
 import { SettingsPanel } from "@/components/reader/SettingsPanel";
 import PageFlip, { type PageFlipHandle } from "@/components/reader/PageFlip";
+import {
+  HIGHLIGHT_COLORS,
+  SelectionToolbar,
+  type MarkStyle,
+} from "@/components/reader/SelectionToolbar";
 import type { SearchHit, TocItem, ViewHandle } from "@/components/reader/types";
 import {
   addBookmark,
@@ -64,13 +69,6 @@ export const Route = createFileRoute("/reader/$id")({
   component: ReaderPage,
 });
 
-const HIGHLIGHT_COLORS: { id: HighlightColor; hex: string }[] = [
-  { id: "yellow", hex: "#f2c14e" },
-  { id: "green", hex: "#7bbf6a" },
-  { id: "blue", hex: "#6aa7d8" },
-  { id: "pink", hex: "#e08aa8" },
-  { id: "purple", hex: "#a78bd8" },
-];
 
 function ReaderPage() {
   const { id } = Route.useParams();
@@ -95,6 +93,16 @@ function ReaderPage() {
   const [pageLabel, setPageLabel] = useState("");
   const viewRef = useRef<ViewHandle>(null);
   const flipRef = useRef<PageFlipHandle>(null);
+  const [selection, setSelection] = useState<{
+    text: string;
+    location: string;
+    rect: { top: number; left: number; width: number; height: number };
+  } | null>(null);
+  const [mark, setMark] = useState<MarkStyle>({
+    color: "yellow",
+    style: "highlight",
+    bold: false,
+  });
   const locationRef = useRef("");
 
   useEffect(() => {
@@ -225,26 +233,59 @@ function ReaderPage() {
     toast.success("Marcador adicionado");
   }
 
-  async function addHighlight(color: HighlightColor) {
-    const sel = viewRef.current?.selection?.();
+  async function saveMark(note: string, color?: HighlightColor) {
+    const sel = selection ?? viewRef.current?.selection?.();
     if (!sel) {
       toast.error("Selecione um trecho do texto primeiro");
       return;
     }
-    const note = window.prompt("Nota (opcional)", "") ?? "";
     const h: Highlight = {
       id: uid(),
       bookId: id,
       location: sel.location,
       text: sel.text,
       note,
-      color,
+      color: color ?? mark.color,
+      style: mark.style,
+      bold: mark.bold,
       createdAt: Date.now(),
     };
     await saveHighlight(h);
     setHighlights(await listHighlights(id));
-    toast.success("Trecho destacado");
+    viewRef.current?.clearSelection?.();
+    setSelection(null);
+    toast.success(note ? "Nota salva" : "Trecho destacado");
   }
+
+  async function addHighlight(color: HighlightColor) {
+    await saveMark("", color);
+  }
+
+  async function copySelection() {
+    const sel = selection ?? viewRef.current?.selection?.();
+    if (!sel) return;
+    try {
+      await navigator.clipboard.writeText(sel.text);
+      toast.success("Trecho copiado");
+    } catch {
+      toast.error("Não foi possível copiar");
+    }
+    viewRef.current?.clearSelection?.();
+    setSelection(null);
+  }
+
+  // observa a seleção de texto para mostrar a barrinha de marcação
+  useEffect(() => {
+    const timer = setInterval(() => {
+      const sel = viewRef.current?.selection?.();
+      if (sel?.text && sel.rect && sel.rect.width + sel.rect.height > 0) {
+        setSelection({ text: sel.text, location: sel.location, rect: sel.rect });
+      } else {
+        setSelection((prev) => (prev ? null : prev));
+      }
+    }, 350);
+    return () => clearInterval(timer);
+  }, [book]);
 
   // teclado / botões de volume
   useEffect(() => {
@@ -323,6 +364,22 @@ function ReaderPage() {
           </p>
         )}
         <PageFlip ref={flipRef} color={theme.bg} />
+      </div>
+
+      {selection && (
+        <SelectionToolbar
+          rect={selection.rect}
+          mark={mark}
+          onMarkChange={setMark}
+          onCopy={() => void copySelection()}
+          onHighlight={() => void saveMark("")}
+          onNote={() => {
+            const note = window.prompt("Nota", "") ?? "";
+            void saveMark(note);
+          }}
+        />
+      )}
+      <div className="hidden">
       </div>
 
 
