@@ -24,6 +24,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Slider } from "@/components/ui/slider";
 import { SettingsPanel } from "@/components/reader/SettingsPanel";
+import PageFlip, { type PageFlipHandle } from "@/components/reader/PageFlip";
 import type { SearchHit, TocItem, ViewHandle } from "@/components/reader/types";
 import {
   addBookmark,
