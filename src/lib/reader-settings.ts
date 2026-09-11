@@ -56,7 +56,7 @@ export interface ReaderSettings {
   bold: boolean;
   letterSpacing: number;
   pageMode: PageMode;
-  animation: "slide" | "fade" | "none";
+  animation: "curl" | "slide" | "fade" | "none";
   brightness: number;
   fullscreen: boolean;
   keepAwake: boolean;
@@ -86,7 +86,7 @@ export const useReaderSettings = create<ReaderSettings>()(
       bold: false,
       letterSpacing: 0,
       pageMode: "paged",
-      animation: "slide",
+      animation: "curl",
       brightness: 1,
       fullscreen: false,
       keepAwake: true,

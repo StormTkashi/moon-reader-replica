@@ -24,6 +24,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sh
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Slider } from "@/components/ui/slider";
 import { SettingsPanel } from "@/components/reader/SettingsPanel";
+import PageFlip, { type PageFlipHandle } from "@/components/reader/PageFlip";
 import type { SearchHit, TocItem, ViewHandle } from "@/components/reader/types";
 import {
   addBookmark,
@@ -93,6 +94,7 @@ function ReaderPage() {
   const [progress, setProgress] = useState(0);
   const [pageLabel, setPageLabel] = useState("");
   const viewRef = useRef<ViewHandle>(null);
+  const flipRef = useRef<PageFlipHandle>(null);
   const locationRef = useRef("");
 
   useEffect(() => {
@@ -178,9 +180,13 @@ function ReaderPage() {
     (action: string) => {
       switch (action) {
         case "next":
+          if (settings.animation === "curl" && settings.pageMode === "paged")
+            flipRef.current?.flip("next");
           viewRef.current?.next();
           break;
         case "prev":
+          if (settings.animation === "curl" && settings.pageMode === "paged")
+            flipRef.current?.flip("prev");
           viewRef.current?.prev();
           break;
         case "menu":
@@ -316,7 +322,9 @@ function ReaderPage() {
             Carregando…
           </p>
         )}
+        <PageFlip ref={flipRef} color={theme.bg} />
       </div>
+
 
       {settings.showStatusBar && !chrome && (
         <div
