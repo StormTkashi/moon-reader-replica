@@ -5,6 +5,7 @@ import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
 import { useReaderSettings } from "@/lib/reader-settings";
 import { UpdateCheck } from "@/components/UpdateCheck";
+import { AccountCard } from "@/components/AccountCard";
 
 export const Route = createFileRoute("/settings")({
   head: () => ({
@@ -29,6 +30,7 @@ function SettingsPage() {
   return (
     <AppShell title="Configurações">
       <main className="mx-auto max-w-2xl px-4 py-4">
+        <AccountCard />
         <SettingsPanel />
         <div className="mt-6 border-t border-border pt-4">
           <Label className="text-sm font-normal text-muted-foreground">
