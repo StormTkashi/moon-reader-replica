@@ -34,6 +34,8 @@ export interface Highlight {
   text: string;
   note: string;
   color: HighlightColor;
+  style?: "highlight" | "underline";
+  bold?: boolean;
   createdAt: number;
 }
 

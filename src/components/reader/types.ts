@@ -18,7 +18,10 @@ export interface ViewHandle {
   search: (query: string) => Promise<SearchHit[]>;
   currentLocation: () => string;
   scrollBy?: (px: number) => void;
-  selection?: () => { text: string; location: string } | null;
+  selection?: () =>
+    | { text: string; location: string; rect?: { top: number; left: number; width: number; height: number } }
+    | null;
+  clearSelection?: () => void;
 }
 
 export interface ViewProps {
