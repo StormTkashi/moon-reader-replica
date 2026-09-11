@@ -86,7 +86,7 @@ export const useReaderSettings = create<ReaderSettings>()(
       bold: false,
       letterSpacing: 0,
       pageMode: "paged",
-      animation: "slide",
+      animation: "curl",
       brightness: 1,
       fullscreen: false,
       keepAwake: true,
