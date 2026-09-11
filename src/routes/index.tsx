@@ -60,6 +60,16 @@ function Library() {
   const [tab, setTab] = useState("all");
   const [tag, setTag] = useState<string | null>(null);
   const [view, setView] = useState<"grid" | "list">("grid");
+  const [perRow, setPerRow] = useState(() =>
+    typeof window !== "undefined" && window.matchMedia("(min-width: 640px)").matches ? 4 : 3,
+  );
+
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 640px)");
+    const onChange = () => setPerRow(mq.matches ? 4 : 3);
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
 
   const refresh = useCallback(async () => setBooks(await listBooks()), []);
 
@@ -204,28 +214,7 @@ function Library() {
             )}
 
             {view === "grid" ? (
-              <div className="grid grid-cols-3 gap-3 sm:grid-cols-4">
-                {visible.map((book) => (
-                  <div key={book.id} className="group relative">
-                    <button
-                      className="w-full text-left"
-                      onClick={() => navigate({ to: "/reader/$id", params: { id: book.id } })}
-                    >
-                      <CoverPicker
-                        book={book}
-                        className="aspect-[2/3] w-full"
-                        onChange={refresh}
-                      />
-                      <p className="mt-1.5 line-clamp-2 text-xs font-medium leading-snug">
-                        {book.title}
-                      </p>
-                      <p className="line-clamp-1 text-[11px] text-muted-foreground">{book.author}</p>
-                      <ProgressBar value={book.progress} />
-                    </button>
-                    <BookMenu book={book} onChange={refresh} />
-                  </div>
-                ))}
-              </div>
+              <Shelf books={visible} perRow={perRow} onOpen={(id) => navigate({ to: "/reader/$id", params: { id } })} onChange={refresh} />
             ) : (
               <ul className="divide-y divide-border">
                 {visible.map((book) => (
@@ -250,6 +239,49 @@ function Library() {
         )}
       </main>
     </AppShell>
+  );
+}
+
+/** Estante com prateleiras de madeira, estilo Moon+ Reader: livros em pé sobre tábuas. */
+function Shelf({
+  books,
+  perRow,
+  onOpen,
+  onChange,
+}: {
+  books: BookMeta[];
+  perRow: number;
+  onOpen: (id: string) => void;
+  onChange: () => Promise<void> | void;
+}) {
+  const rows: BookMeta[][] = [];
+  for (let i = 0; i < books.length; i += perRow) rows.push(books.slice(i, i + perRow));
+
+  return (
+    <div className="flex flex-col gap-6">
+      {rows.map((row, i) => (
+        <div key={i}>
+          <div
+            className="grid items-end gap-3 px-2"
+            style={{ gridTemplateColumns: `repeat(${perRow}, minmax(0, 1fr))` }}
+          >
+            {row.map((book) => (
+              <div key={book.id} className="group relative">
+                <button className="w-full text-left" onClick={() => onOpen(book.id)}>
+                  <CoverPicker book={book} className="aspect-[2/3] w-full" onChange={onChange} />
+                  <p className="mt-1 line-clamp-1 text-center text-[11px] font-medium">
+                    {book.title}
+                  </p>
+                  <ProgressBar value={book.progress} />
+                </button>
+                <BookMenu book={book} onChange={onChange} />
+              </div>
+            ))}
+          </div>
+          <div className="shelf-plank mt-1" aria-hidden="true" />
+        </div>
+      ))}
+    </div>
   );
 }
 
