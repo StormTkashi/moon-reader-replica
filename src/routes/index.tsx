@@ -291,8 +291,33 @@ function Shelf({
             ))}
           </div>
           <div className="shelf-plank" aria-hidden="true" />
+          </div>
+        ))}
+      </div>
+
+      {pageCount > 1 && (
+        <div className="mt-4 flex items-center justify-center gap-3">
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={current === 0}
+            onClick={() => setPage(current - 1)}
+          >
+            <ChevronLeft className="mr-1 h-4 w-4" /> Anterior
+          </Button>
+          <span className="text-sm text-muted-foreground">
+            Página {current + 1} de {pageCount}
+          </span>
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={current >= pageCount - 1}
+            onClick={() => setPage(current + 1)}
+          >
+            Próxima <ChevronRight className="ml-1 h-4 w-4" />
+          </Button>
         </div>
-      ))}
+      )}
     </div>
   );
 }
