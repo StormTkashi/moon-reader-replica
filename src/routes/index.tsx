@@ -204,28 +204,7 @@ function Library() {
             )}
 
             {view === "grid" ? (
-              <div className="grid grid-cols-3 gap-3 sm:grid-cols-4">
-                {visible.map((book) => (
-                  <div key={book.id} className="group relative">
-                    <button
-                      className="w-full text-left"
-                      onClick={() => navigate({ to: "/reader/$id", params: { id: book.id } })}
-                    >
-                      <CoverPicker
-                        book={book}
-                        className="aspect-[2/3] w-full"
-                        onChange={refresh}
-                      />
-                      <p className="mt-1.5 line-clamp-2 text-xs font-medium leading-snug">
-                        {book.title}
-                      </p>
-                      <p className="line-clamp-1 text-[11px] text-muted-foreground">{book.author}</p>
-                      <ProgressBar value={book.progress} />
-                    </button>
-                    <BookMenu book={book} onChange={refresh} />
-                  </div>
-                ))}
-              </div>
+              <Shelf books={visible} perRow={perRow} onOpen={(id) => navigate({ to: "/reader/$id", params: { id } })} onChange={refresh} />
             ) : (
               <ul className="divide-y divide-border">
                 {visible.map((book) => (
