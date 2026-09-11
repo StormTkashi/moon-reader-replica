@@ -5,7 +5,6 @@ import {
   Check,
   FolderPlus,
   MoreVertical,
-  Plus,
   Search,
   Tag,
   Trash2,
@@ -31,7 +30,6 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { deleteBook, listBooks, updateBook, type BookMeta } from "@/lib/db";
-import { importFile } from "@/lib/import-book";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -62,7 +60,6 @@ function Library() {
   const [tab, setTab] = useState("all");
   const [tag, setTag] = useState<string | null>(null);
   const [view, setView] = useState<"grid" | "list">("grid");
-  const inputRef = useRef<HTMLInputElement>(null);
 
   const refresh = useCallback(async () => setBooks(await listBooks()), []);
 
@@ -96,32 +93,11 @@ function Library() {
     return list.sort(cmp[sort]);
   }, [books, query, tab, tag, sort]);
 
-  async function handleFiles(files: FileList | null) {
-    if (!files?.length) return;
-    let ok = 0;
-    for (const file of Array.from(files)) {
-      try {
-        const book = await importFile(file);
-        if (book) ok++;
-        else toast.error(`Formato não suportado: ${file.name}`);
-      } catch {
-        toast.error(`Não consegui abrir ${file.name}`);
-      }
-    }
-    if (ok) toast.success(`${ok} livro(s) adicionado(s)`);
-    await refresh();
-  }
-
   const continueBook = visible.find((b) => b.progress > 0 && !b.finished);
 
   return (
     <AppShell
       title="Minha estante"
-      actions={
-        <Button size="sm" onClick={() => inputRef.current?.click()}>
-          <Plus className="mr-1 h-4 w-4" /> Adicionar
-        </Button>
-      }
       subheader={
         <>
           <div className="mt-3 flex items-center gap-2">
@@ -199,35 +175,16 @@ function Library() {
     >
 
 
-      <input
-        ref={inputRef}
-        type="file"
-        accept=".epub,.pdf,.txt,.md"
-        multiple
-        hidden
-        onChange={(e) => {
-          void handleFiles(e.target.files);
-          e.target.value = "";
-        }}
-      />
-
-      <main
-        className="px-4 py-4"
-        onDragOver={(e) => e.preventDefault()}
-        onDrop={(e) => {
-          e.preventDefault();
-          void handleFiles(e.dataTransfer.files);
-        }}
-      >
+      <main className="px-4 py-4">
         {books === null ? (
           <p className="py-16 text-center text-sm text-muted-foreground">Carregando estante…</p>
         ) : books.length === 0 ? (
           <div className="mt-16 flex flex-col items-center gap-3 text-center">
             <FolderPlus className="h-12 w-12 text-muted-foreground" />
             <p className="text-sm text-muted-foreground">
-              Sua estante está vazia. Adicione arquivos EPUB, PDF ou TXT do aparelho.
+              Sua estante está vazia. Vá em Meus arquivos para adicionar EPUB, PDF ou TXT.
             </p>
-            <Button onClick={() => inputRef.current?.click()}>Escolher arquivos</Button>
+            <Button onClick={() => navigate({ to: "/files" })}>Ir para Meus arquivos</Button>
           </div>
         ) : (
           <>
