@@ -149,3 +149,33 @@
     display: none;
   }
 }
+
+@keyframes page-flip-next {
+  from {
+    transform: rotateY(0deg);
+    opacity: 1;
+  }
+  to {
+    transform: rotateY(-165deg);
+    opacity: 0.35;
+  }
+}
+
+@keyframes page-flip-prev {
+  from {
+    transform: rotateY(165deg);
+    opacity: 0.35;
+  }
+  to {
+    transform: rotateY(0deg);
+    opacity: 1;
+  }
+}
+
+.animate-page-flip-next {
+  animation: page-flip-next 480ms cubic-bezier(0.3, 0.7, 0.4, 1) forwards;
+}
+
+.animate-page-flip-prev {
+  animation: page-flip-prev 480ms cubic-bezier(0.3, 0.7, 0.4, 1) forwards;
+}
