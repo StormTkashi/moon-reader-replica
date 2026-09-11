@@ -60,10 +60,10 @@ export const Route = createFileRoute("/reader/$id")({
     typeof search['loc'] === "string" ? { loc: search['loc'] as string } : {},
   head: () => ({
     meta: [
-      { title: "Leitura — Lumen Reader" },
+      { title: "Leitura — teste" },
       { name: "description", content: "Leia com temas, marcações, notas e rolagem automática." },
-      { property: "og:title", content: "Leitura — Lumen Reader" },
-      { property: "og:description", content: "Tela de leitura do Lumen Reader." },
+      { property: "og:title", content: "Leitura — teste" },
+      { property: "og:description", content: "Tela de leitura do teste." },
     ],
   }),
   component: ReaderPage,

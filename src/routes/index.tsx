@@ -34,13 +34,13 @@ import { deleteBook, listBooks, updateBook, type BookMeta } from "@/lib/db";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Lumen Reader — sua estante de livros" },
+      { title: "teste — sua estante de livros" },
       {
         name: "description",
         content:
           "Estante com seus livros em EPUB, PDF e TXT: progresso, etiquetas e leitura offline.",
       },
-      { property: "og:title", content: "Lumen Reader — sua estante de livros" },
+      { property: "og:title", content: "teste — sua estante de livros" },
       {
         property: "og:description",
         content: "Abra EPUB, PDF e TXT com temas, marcações e estatísticas de leitura.",
