@@ -1,14 +1,19 @@
-# Welcome to your Lovable project
+# Moonstone Reader
+
+Chat, preciso que crie um aplicativo identico ao Moon + Reader Com todas as funções, ok? No mesmo estilo
+Vai ser usado em aplicativo android
 
 This project was built with [Lovable](https://lovable.dev).
 
+**Live app**: https://moon-reader-replica.lovable.app
+
 ## Build with Lovable
 
-Open your project in the [Lovable editor](https://lovable.dev) and keep building.
+Continue developing this project in the [Lovable editor](https://lovable.dev/projects/8d71c045-b9a6-4521-9c65-1d93136949ff).
 
 - **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: connect the project to GitHub and every change made in Lovable is committed straight to your repository.
-- **Full ownership**: this code is yours. Push to your repository and your changes sync back into Lovable, ready for your next prompt.
+- **Stay in sync**: every change made in Lovable is committed straight to this repository.
+- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
 
 ## Development
 
@@ -20,10 +25,3 @@ cd <repository-name>
 npm i
 npm run dev
 ```
-
-## Built with
-
-- TanStack Start
-- TypeScript
-- React
-- Tailwind CSS
