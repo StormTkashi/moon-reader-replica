@@ -5,7 +5,6 @@ import {
   Check,
   FolderPlus,
   MoreVertical,
-  Plus,
   Search,
   Tag,
   Trash2,
