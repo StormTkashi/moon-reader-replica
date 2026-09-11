@@ -56,7 +56,7 @@ export interface ReaderSettings {
   bold: boolean;
   letterSpacing: number;
   pageMode: PageMode;
-  animation: "slide" | "fade" | "none";
+  animation: "curl" | "slide" | "fade" | "none";
   brightness: number;
   fullscreen: boolean;
   keepAwake: boolean;
