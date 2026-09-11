@@ -258,18 +258,23 @@ function Shelf({
   for (let i = 0; i < books.length; i += perRow) rows.push(books.slice(i, i + perRow));
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="shelf-case">
+      <div className="shelf-top" aria-hidden="true" />
       {rows.map((row, i) => (
-        <div key={i}>
+        <div key={i} className="shelf-row">
           <div
-            className="grid items-end gap-3 px-2"
+            className="grid items-end gap-3 px-4 pt-4"
             style={{ gridTemplateColumns: `repeat(${perRow}, minmax(0, 1fr))` }}
           >
             {row.map((book) => (
               <div key={book.id} className="group relative">
                 <button className="w-full text-left" onClick={() => onOpen(book.id)}>
-                  <CoverPicker book={book} className="aspect-[2/3] w-full" onChange={onChange} />
-                  <p className="mt-1 line-clamp-1 text-center text-[11px] font-medium">
+                  <CoverPicker
+                    book={book}
+                    className="aspect-[2/3] w-full shadow-[0_8px_14px_rgba(0,0,0,0.55)]"
+                    onChange={onChange}
+                  />
+                  <p className="mt-1 line-clamp-1 text-center text-[11px] font-medium text-amber-100/90 drop-shadow">
                     {book.title}
                   </p>
                   <ProgressBar value={book.progress} />
@@ -278,7 +283,7 @@ function Shelf({
               </div>
             ))}
           </div>
-          <div className="shelf-plank mt-1" aria-hidden="true" />
+          <div className="shelf-plank" aria-hidden="true" />
         </div>
       ))}
     </div>
