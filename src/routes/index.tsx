@@ -60,6 +60,16 @@ function Library() {
   const [tab, setTab] = useState("all");
   const [tag, setTag] = useState<string | null>(null);
   const [view, setView] = useState<"grid" | "list">("grid");
+  const [perRow, setPerRow] = useState(() =>
+    typeof window !== "undefined" && window.matchMedia("(min-width: 640px)").matches ? 4 : 3,
+  );
+
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 640px)");
+    const onChange = () => setPerRow(mq.matches ? 4 : 3);
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
 
   const refresh = useCallback(async () => setBooks(await listBooks()), []);
 
