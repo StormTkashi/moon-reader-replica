@@ -3,6 +3,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   BookOpen,
   Check,
+  ChevronLeft,
+  ChevronRight,
   FolderPlus,
   MoreVertical,
   Search,
@@ -254,13 +256,20 @@ function Shelf({
   onOpen: (id: string) => void;
   onChange: () => Promise<void> | void;
 }) {
+  const rowsPerPage = 3; // 3 prateleiras por página
   const rows: BookMeta[][] = [];
   for (let i = 0; i < books.length; i += perRow) rows.push(books.slice(i, i + perRow));
 
+  const pageCount = Math.max(1, Math.ceil(rows.length / rowsPerPage));
+  const [page, setPage] = useState(0);
+  const current = Math.min(page, pageCount - 1);
+  const pageRows = rows.slice(current * rowsPerPage, current * rowsPerPage + rowsPerPage);
+
   return (
-    <div className="shelf-case">
-      <div className="shelf-top" aria-hidden="true" />
-      {rows.map((row, i) => (
+    <div>
+      <div className="shelf-case">
+        <div className="shelf-top" aria-hidden="true" />
+        {pageRows.map((row, i) => (
         <div key={i} className="shelf-row">
           <div
             className="grid items-end gap-3 px-4 pt-4"
@@ -284,8 +293,33 @@ function Shelf({
             ))}
           </div>
           <div className="shelf-plank" aria-hidden="true" />
+          </div>
+        ))}
+      </div>
+
+      {pageCount > 1 && (
+        <div className="mt-4 flex items-center justify-center gap-3">
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={current === 0}
+            onClick={() => setPage(current - 1)}
+          >
+            <ChevronLeft className="mr-1 h-4 w-4" /> Anterior
+          </Button>
+          <span className="text-sm text-muted-foreground">
+            Página {current + 1} de {pageCount}
+          </span>
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={current >= pageCount - 1}
+            onClick={() => setPage(current + 1)}
+          >
+            Próxima <ChevronRight className="ml-1 h-4 w-4" />
+          </Button>
         </div>
-      ))}
+      )}
     </div>
   );
 }
