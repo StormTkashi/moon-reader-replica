@@ -98,11 +98,6 @@ function Library() {
   return (
     <AppShell
       title="Minha estante"
-      actions={
-        <Button size="sm" onClick={() => inputRef.current?.click()}>
-          <Plus className="mr-1 h-4 w-4" /> Adicionar
-        </Button>
-      }
       subheader={
         <>
           <div className="mt-3 flex items-center gap-2">
