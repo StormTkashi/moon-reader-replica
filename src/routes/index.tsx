@@ -3,6 +3,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   BookOpen,
   Check,
+  ChevronLeft,
+  ChevronRight,
   FolderPlus,
   MoreVertical,
   Search,
