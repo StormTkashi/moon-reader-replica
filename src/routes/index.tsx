@@ -175,35 +175,16 @@ function Library() {
     >
 
 
-      <input
-        ref={inputRef}
-        type="file"
-        accept=".epub,.pdf,.txt,.md"
-        multiple
-        hidden
-        onChange={(e) => {
-          void handleFiles(e.target.files);
-          e.target.value = "";
-        }}
-      />
-
-      <main
-        className="px-4 py-4"
-        onDragOver={(e) => e.preventDefault()}
-        onDrop={(e) => {
-          e.preventDefault();
-          void handleFiles(e.dataTransfer.files);
-        }}
-      >
+      <main className="px-4 py-4">
         {books === null ? (
           <p className="py-16 text-center text-sm text-muted-foreground">Carregando estante…</p>
         ) : books.length === 0 ? (
           <div className="mt-16 flex flex-col items-center gap-3 text-center">
             <FolderPlus className="h-12 w-12 text-muted-foreground" />
             <p className="text-sm text-muted-foreground">
-              Sua estante está vazia. Adicione arquivos EPUB, PDF ou TXT do aparelho.
+              Sua estante está vazia. Vá em Meus arquivos para adicionar EPUB, PDF ou TXT.
             </p>
-            <Button onClick={() => inputRef.current?.click()}>Escolher arquivos</Button>
+            <Button onClick={() => navigate({ to: "/files" })}>Ir para Meus arquivos</Button>
           </div>
         ) : (
           <>
