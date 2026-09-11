@@ -42,12 +42,56 @@ async function pdfMeta(file: File) {
     canvas.height = viewport.height;
     const ctx = canvas.getContext("2d")!;
     await page.render({ canvasContext: ctx, viewport }).promise;
-    cover = canvas.toDataURL("image/jpeg", 0.7);
+    cover = isBlankCanvas(canvas, ctx) ? undefined : canvas.toDataURL("image/jpeg", 0.7);
   } catch {
     cover = undefined;
   }
   await (doc as unknown as { destroy?: () => Promise<void> }).destroy?.();
   return { title: info?.Title, author: info?.Author, cover };
+}
+
+/** Considera "sem foto" quando a primeira página é praticamente uniforme (só texto/branco). */
+function isBlankCanvas(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) {
+  try {
+    const { data } = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    let colored = 0;
+    let total = 0;
+    for (let i = 0; i < data.length; i += 4 * 37) {
+      const r = data[i]!;
+      const g = data[i + 1]!;
+      const b = data[i + 2]!;
+      total++;
+      const max = Math.max(r, g, b);
+      const min = Math.min(r, g, b);
+      // pixel colorido ou cinza médio => provável imagem
+      if (max - min > 18 || (min > 40 && max < 215)) colored++;
+    }
+    if (!total) return true;
+    return colored / total < 0.06;
+  } catch {
+    return false;
+  }
+}
+
+export function imageFileToCover(file: File, maxWidth = 600) {
+  return new Promise<string>((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      const scale = Math.min(1, maxWidth / img.width);
+      const canvas = document.createElement("canvas");
+      canvas.width = Math.round(img.width * scale);
+      canvas.height = Math.round(img.height * scale);
+      canvas.getContext("2d")!.drawImage(img, 0, 0, canvas.width, canvas.height);
+      URL.revokeObjectURL(url);
+      resolve(canvas.toDataURL("image/jpeg", 0.8));
+    };
+    img.onerror = (e) => {
+      URL.revokeObjectURL(url);
+      reject(e);
+    };
+    img.src = url;
+  });
 }
 
 function blobToDataUrl(blob: Blob) {

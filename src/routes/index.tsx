@@ -12,7 +12,7 @@ import {
 import { toast } from "sonner";
 
 import { AppShell } from "@/components/AppShell";
-import { Cover, ProgressBar } from "@/components/Cover";
+import { Cover, CoverPicker, ProgressBar } from "@/components/Cover";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -211,7 +211,11 @@ function Library() {
                       className="w-full text-left"
                       onClick={() => navigate({ to: "/reader/$id", params: { id: book.id } })}
                     >
-                      <Cover book={book} className="aspect-[2/3] w-full" />
+                      <CoverPicker
+                        book={book}
+                        className="aspect-[2/3] w-full"
+                        onChange={refresh}
+                      />
                       <p className="mt-1.5 line-clamp-2 text-xs font-medium leading-snug">
                         {book.title}
                       </p>
@@ -230,7 +234,7 @@ function Library() {
                       className="flex min-w-0 flex-1 items-center gap-3 text-left"
                       onClick={() => navigate({ to: "/reader/$id", params: { id: book.id } })}
                     >
-                      <Cover book={book} className="h-16 w-11" />
+                      <CoverPicker book={book} className="h-16 w-11" onChange={refresh} />
                       <div className="min-w-0 flex-1">
                         <p className="truncate text-sm font-medium">{book.title}</p>
                         <p className="truncate text-xs text-muted-foreground">{book.author}</p>
