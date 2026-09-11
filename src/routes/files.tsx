@@ -1,12 +1,10 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { FolderPlus, Trash2, Upload } from "lucide-react";
+import { createFileRoute } from "@tanstack/react-router";
+import { useRef, useState } from "react";
+import { FolderPlus, Upload } from "lucide-react";
 import { toast } from "sonner";
 
 import { AppShell } from "@/components/AppShell";
-import { Cover } from "@/components/Cover";
 import { Button } from "@/components/ui/button";
-import { deleteBook, listBooks, type BookMeta } from "@/lib/db";
 import { importFile } from "@/lib/import-book";
 
 export const Route = createFileRoute("/files")({
@@ -29,15 +27,8 @@ export const Route = createFileRoute("/files")({
 });
 
 function FilesPage() {
-  const navigate = useNavigate();
   const inputRef = useRef<HTMLInputElement>(null);
-  const [books, setBooks] = useState<BookMeta[] | null>(null);
   const [busy, setBusy] = useState(false);
-
-  const refresh = useCallback(async () => setBooks(await listBooks()), []);
-  useEffect(() => {
-    void refresh();
-  }, [refresh]);
 
   async function handleFiles(files: FileList | null) {
     if (!files?.length) return;
@@ -54,10 +45,7 @@ function FilesPage() {
     }
     setBusy(false);
     if (ok) toast.success(`${ok} arquivo(s) importado(s)`);
-    await refresh();
   }
-
-  const sorted = [...(books ?? [])].sort((a, b) => b.addedAt - a.addedAt);
 
   return (
     <AppShell title="Meus arquivos">
@@ -72,64 +60,31 @@ function FilesPage() {
           e.target.value = "";
         }}
       />
-      <main className="mx-auto max-w-2xl px-4 py-4">
+      <main className="mx-auto max-w-2xl px-4 py-8">
         <div
           onDragOver={(e) => e.preventDefault()}
           onDrop={(e) => {
             e.preventDefault();
             void handleFiles(e.dataTransfer.files);
           }}
-          className="flex flex-col items-center gap-3 rounded-xl border border-dashed border-border bg-card/50 px-4 py-10 text-center"
+          className="flex flex-col items-center gap-4 rounded-xl border border-dashed border-border bg-card/50 px-6 py-14 text-center"
         >
-          <Upload className="h-10 w-10 text-muted-foreground" />
-          <p className="text-sm text-muted-foreground">
-            Escolha arquivos EPUB, PDF ou TXT do aparelho, ou arraste até aqui.
-          </p>
+          <Upload className="h-12 w-12 text-muted-foreground" />
+          <div>
+            <p className="text-base font-medium">Importar livros</p>
+            <p className="text-sm text-muted-foreground">
+              Escolha arquivos EPUB, PDF ou TXT do aparelho, ou arraste até aqui.
+            </p>
+          </div>
           <Button disabled={busy} onClick={() => inputRef.current?.click()}>
             <FolderPlus className="mr-2 h-4 w-4" />
             {busy ? "Importando…" : "Escolher arquivos"}
           </Button>
         </div>
 
-        <h2 className="mb-2 mt-6 text-sm font-medium text-muted-foreground">
-          Arquivos importados ({sorted.length})
-        </h2>
-        {sorted.length === 0 ? (
-          <p className="py-8 text-center text-sm text-muted-foreground">
-            Nenhum arquivo importado ainda.
-          </p>
-        ) : (
-          <ul className="divide-y divide-border">
-            {sorted.map((book) => (
-              <li key={book.id} className="flex items-center gap-3 py-3">
-                <button
-                  className="flex min-w-0 flex-1 items-center gap-3 text-left"
-                  onClick={() => navigate({ to: "/reader/$id", params: { id: book.id } })}
-                >
-                  <Cover book={book} className="h-14 w-10" />
-                  <div className="min-w-0">
-                    <p className="truncate text-sm font-medium">{book.title}</p>
-                    <p className="truncate text-xs uppercase text-muted-foreground">
-                      {book.format} · {new Date(book.addedAt).toLocaleDateString("pt-BR")}
-                    </p>
-                  </div>
-                </button>
-                <button
-                  aria-label={`Remover ${book.title}`}
-                  className="rounded-md p-2 text-destructive"
-                  onClick={async () => {
-                    if (!window.confirm(`Remover "${book.title}"?`)) return;
-                    await deleteBook(book.id);
-                    await refresh();
-                    toast.success("Arquivo removido");
-                  }}
-                >
-                  <Trash2 className="h-4 w-4" />
-                </button>
-              </li>
-            ))}
-          </ul>
-        )}
+        <p className="mt-6 text-center text-sm text-muted-foreground">
+          Os livros importados vão direto para a sua estante.
+        </p>
       </main>
     </AppShell>
   );
