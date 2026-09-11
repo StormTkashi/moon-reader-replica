@@ -180,9 +180,13 @@ function ReaderPage() {
     (action: string) => {
       switch (action) {
         case "next":
+          if (settings.animation === "curl" && settings.pageMode === "paged")
+            flipRef.current?.flip("next");
           viewRef.current?.next();
           break;
         case "prev":
+          if (settings.animation === "curl" && settings.pageMode === "paged")
+            flipRef.current?.flip("prev");
           viewRef.current?.prev();
           break;
         case "menu":
