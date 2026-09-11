@@ -4,16 +4,17 @@ import { SettingsPanel } from "@/components/reader/SettingsPanel";
 import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
 import { useReaderSettings } from "@/lib/reader-settings";
+import { UpdateCheck } from "@/components/UpdateCheck";
 
 export const Route = createFileRoute("/settings")({
   head: () => ({
     meta: [
-      { title: "Ajustes de leitura — teste" },
+      { title: "Configurações — teste" },
       {
         name: "description",
         content: "Temas, fontes, margens, gestos e rolagem automática do seu leitor.",
       },
-      { property: "og:title", content: "Ajustes de leitura — teste" },
+      { property: "og:title", content: "Configurações — teste" },
       {
         property: "og:description",
         content: "Personalize temas, tipografia e gestos de leitura.",
@@ -26,7 +27,7 @@ export const Route = createFileRoute("/settings")({
 function SettingsPage() {
   const s = useReaderSettings();
   return (
-    <AppShell title="Ajustes">
+    <AppShell title="Configurações">
       <main className="mx-auto max-w-2xl px-4 py-4">
         <SettingsPanel />
         <div className="mt-6 border-t border-border pt-4">
@@ -42,6 +43,7 @@ function SettingsPage() {
             onValueChange={(vals) => s.set({ dailyGoalMinutes: vals[0] ?? 0 })}
           />
         </div>
+        <UpdateCheck />
       </main>
     </AppShell>
   );

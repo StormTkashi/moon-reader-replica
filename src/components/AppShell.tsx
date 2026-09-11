@@ -18,7 +18,7 @@ const NAV = [
   { to: "/library", label: "Biblioteca", icon: BookOpen, exact: false },
   { to: "/marks", label: "Marcadores", icon: BookMarked, exact: false },
   { to: "/stats", label: "Estatísticas", icon: BarChart3, exact: false },
-  { to: "/settings", label: "Ajustes", icon: Settings, exact: false },
+  { to: "/settings", label: "Configurações", icon: Settings, exact: false },
 ] as const;
 
 export function AppShell({
