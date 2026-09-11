@@ -124,8 +124,20 @@ const TxtView = forwardRef<ViewHandle, ViewProps>(function TxtView(
       const sel = window.getSelection();
       const t = sel?.toString().trim();
       if (!t) return null;
-      return { text: t, location: String(text.indexOf(t)) };
+      const r = sel!.getRangeAt(0).getBoundingClientRect();
+      const host = scrollerRef.current?.getBoundingClientRect();
+      return {
+        text: t,
+        location: String(text.indexOf(t)),
+        rect: {
+          top: r.top - (host?.top ?? 0),
+          left: r.left - (host?.left ?? 0),
+          width: r.width,
+          height: r.height,
+        },
+      };
     },
+    clearSelection: () => window.getSelection()?.removeAllRanges(),
     search: async (query: string) => {
       if (!query) return [];
       const hits: SearchHit[] = [];

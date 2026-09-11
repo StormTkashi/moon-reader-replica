@@ -139,7 +139,19 @@ const EpubView = forwardRef<ViewHandle, ViewProps>(function EpubView(
       const text = sel?.toString()?.trim();
       if (!text) return null;
       const cfi = contents.cfiFromRange(sel.getRangeAt(0));
-      return { text, location: cfi };
+      const r = sel.getRangeAt(0).getBoundingClientRect();
+      const frame = hostRef.current?.querySelector("iframe")?.getBoundingClientRect();
+      const host = hostRef.current?.getBoundingClientRect();
+      const offX = (frame?.left ?? 0) - (host?.left ?? 0);
+      const offY = (frame?.top ?? 0) - (host?.top ?? 0);
+      return {
+        text,
+        location: cfi,
+        rect: { top: r.top + offY, left: r.left + offX, width: r.width, height: r.height },
+      };
+    },
+    clearSelection: () => {
+      renditionRef.current?.getContents?.()?.[0]?.window?.getSelection?.()?.removeAllRanges?.();
     },
     search: async (query: string) => {
       const book = bookRef.current;
