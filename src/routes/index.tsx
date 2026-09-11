@@ -254,13 +254,20 @@ function Shelf({
   onOpen: (id: string) => void;
   onChange: () => Promise<void> | void;
 }) {
+  const rowsPerPage = 3; // 3 prateleiras por página
   const rows: BookMeta[][] = [];
   for (let i = 0; i < books.length; i += perRow) rows.push(books.slice(i, i + perRow));
 
+  const pageCount = Math.max(1, Math.ceil(rows.length / rowsPerPage));
+  const [page, setPage] = useState(0);
+  const current = Math.min(page, pageCount - 1);
+  const pageRows = rows.slice(current * rowsPerPage, current * rowsPerPage + rowsPerPage);
+
   return (
-    <div className="shelf-case">
-      <div className="shelf-top" aria-hidden="true" />
-      {rows.map((row, i) => (
+    <div>
+      <div className="shelf-case">
+        <div className="shelf-top" aria-hidden="true" />
+        {pageRows.map((row, i) => (
         <div key={i} className="shelf-row">
           <div
             className="grid items-end gap-3 px-4 pt-4"
