@@ -94,6 +94,7 @@ function ReaderPage() {
   const [progress, setProgress] = useState(0);
   const [pageLabel, setPageLabel] = useState("");
   const viewRef = useRef<ViewHandle>(null);
+  const flipRef = useRef<PageFlipHandle>(null);
   const locationRef = useRef("");
 
   useEffect(() => {
