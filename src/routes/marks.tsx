@@ -20,12 +20,12 @@ export const Route = createFileRoute("/marks")({
   ssr: false,
   head: () => ({
     meta: [
-      { title: "Marcadores — Lumen Reader" },
+      { title: "Marcadores — teste" },
       {
         name: "description",
         content: "Todos os seus marcadores, destaques e notas reunidos por livro.",
       },
-      { property: "og:title", content: "Marcadores — Lumen Reader" },
+      { property: "og:title", content: "Marcadores — teste" },
       {
         property: "og:description",
         content: "Volte direto ao trecho marcado em qualquer livro da sua estante.",

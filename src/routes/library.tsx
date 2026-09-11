@@ -6,15 +6,15 @@ import { AppShell } from "@/components/AppShell";
 export const Route = createFileRoute("/library")({
   head: () => ({
     meta: [
-      { title: "Biblioteca — Lumen Reader" },
+      { title: "Biblioteca — teste" },
       {
         name: "description",
-        content: "Catálogo de livros online do Lumen Reader, em desenvolvimento.",
+        content: "Catálogo de livros online do teste, em desenvolvimento.",
       },
-      { property: "og:title", content: "Biblioteca — Lumen Reader" },
+      { property: "og:title", content: "Biblioteca — teste" },
       {
         property: "og:description",
-        content: "Em breve: baixe livros direto pela biblioteca do Lumen Reader.",
+        content: "Em breve: baixe livros direto pela biblioteca do teste.",
       },
     ],
   }),

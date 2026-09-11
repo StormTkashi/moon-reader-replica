@@ -8,12 +8,12 @@ import { useReaderSettings } from "@/lib/reader-settings";
 export const Route = createFileRoute("/settings")({
   head: () => ({
     meta: [
-      { title: "Ajustes de leitura — Lumen Reader" },
+      { title: "Ajustes de leitura — teste" },
       {
         name: "description",
         content: "Temas, fontes, margens, gestos e rolagem automática do seu leitor.",
       },
-      { property: "og:title", content: "Ajustes de leitura — Lumen Reader" },
+      { property: "og:title", content: "Ajustes de leitura — teste" },
       {
         property: "og:description",
         content: "Personalize temas, tipografia e gestos de leitura.",

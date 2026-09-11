@@ -7,12 +7,12 @@ import { useReaderSettings } from "@/lib/reader-settings";
 export const Route = createFileRoute("/stats")({
   head: () => ({
     meta: [
-      { title: "Estatísticas de leitura — Lumen Reader" },
+      { title: "Estatísticas de leitura — teste" },
       {
         name: "description",
         content: "Tempo lido, sequência de dias, meta diária e livros terminados.",
       },
-      { property: "og:title", content: "Estatísticas de leitura — Lumen Reader" },
+      { property: "og:title", content: "Estatísticas de leitura — teste" },
       {
         property: "og:description",
         content: "Acompanhe seu tempo de leitura e a sua sequência de dias.",

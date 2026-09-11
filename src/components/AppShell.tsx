@@ -48,7 +48,7 @@ export function AppShell({
             <SheetContent side="left" className="w-72 p-0">
               <div className="flex items-center gap-2 border-b border-border px-5 py-5">
                 <BookOpen className="h-6 w-6 text-primary" />
-                <span className="text-lg font-semibold">Lumen Reader</span>
+                <span className="text-lg font-semibold">teste</span>
               </div>
               <nav className="py-2">
                 {NAV.map(({ to, label, icon: Icon, exact }) => (

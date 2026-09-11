@@ -13,15 +13,15 @@ export const Route = createFileRoute("/files")({
   ssr: false,
   head: () => ({
     meta: [
-      { title: "Meus arquivos — Lumen Reader" },
+      { title: "Meus arquivos — teste" },
       {
         name: "description",
         content: "Importe arquivos EPUB, PDF e TXT do aparelho para sua estante.",
       },
-      { property: "og:title", content: "Meus arquivos — Lumen Reader" },
+      { property: "og:title", content: "Meus arquivos — teste" },
       {
         property: "og:description",
-        content: "Adicione livros do aparelho ao Lumen Reader em poucos toques.",
+        content: "Adicione livros do aparelho ao teste em poucos toques.",
       },
     ],
   }),

@@ -81,7 +81,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         name: "viewport",
         content: "width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover",
       },
-      { title: "Lumen Reader" },
+      { title: "teste" },
       { name: "description", content: "Leitor de EPUB, PDF e TXT com temas, notas e estatísticas." },
       { name: "theme-color", content: "#1b1d23" },
       { property: "og:type", content: "website" },
