@@ -1,3 +1,5 @@
+import type { Highlight } from "@/lib/db";
+
 export interface TocItem {
   label: string;
   href: string;
@@ -27,6 +29,7 @@ export interface ViewHandle {
 export interface ViewProps {
   blob: Blob;
   initialLocation: string;
+  highlights: Highlight[];
   onProgress: (progress: number, location: string, pageLabel: string) => void;
   onToc: (toc: TocItem[]) => void;
   onTap: (zone: "left" | "center" | "right") => void;

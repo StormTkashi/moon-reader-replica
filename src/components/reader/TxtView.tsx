@@ -4,7 +4,7 @@ import { useTapZones } from "@/lib/use-tap-zones";
 import type { SearchHit, TocItem, ViewHandle, ViewProps } from "./types";
 
 const TxtView = forwardRef<ViewHandle, ViewProps>(function TxtView(
-  { blob, initialLocation, onProgress, onToc, onTap },
+  { blob, initialLocation, highlights, onProgress, onToc, onTap },
   ref,
 ) {
   const [text, setText] = useState("");
@@ -18,6 +18,62 @@ const TxtView = forwardRef<ViewHandle, ViewProps>(function TxtView(
   const [pageWidth, setPageWidth] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
   const paged = settings.pageMode === "paged";
+
+  const markedText = useMemo(() => {
+    const colors = {
+      yellow: "#f2c14e",
+      green: "#7bbf6a",
+      blue: "#6aa7d8",
+      pink: "#e08aa8",
+      purple: "#a78bd8",
+    } as const;
+    const valid = highlights
+      .map((highlight) => ({
+        ...highlight,
+        start: Number(highlight.location),
+        end: Number(highlight.location) + highlight.text.length,
+      }))
+      .filter(
+        (highlight) =>
+          Number.isFinite(highlight.start) &&
+          highlight.start >= 0 &&
+          highlight.end > highlight.start &&
+          highlight.end <= text.length,
+      )
+      .sort((a, b) => a.start - b.start || a.createdAt - b.createdAt);
+
+    const nodes: React.ReactNode[] = [];
+    let cursor = 0;
+    valid.forEach((highlight) => {
+      const start = Math.max(cursor, highlight.start);
+      if (start >= highlight.end) return;
+      if (start > cursor) nodes.push(text.slice(cursor, start));
+      nodes.push(
+        <mark
+          key={highlight.id}
+          className="rounded-[2px] text-inherit"
+          style={
+            highlight.style === "underline"
+              ? {
+                  backgroundColor: "transparent",
+                  fontWeight: highlight.bold ? 700 : "inherit",
+                  textDecoration: `underline 2px ${colors[highlight.color]}`,
+                  textUnderlineOffset: 2,
+                }
+              : {
+                  backgroundColor: colors[highlight.color],
+                  fontWeight: highlight.bold ? 700 : "inherit",
+                }
+          }
+        >
+          {text.slice(start, highlight.end)}
+        </mark>,
+      );
+      cursor = highlight.end;
+    });
+    if (cursor < text.length) nodes.push(text.slice(cursor));
+    return nodes;
+  }, [highlights, text]);
 
   useEffect(() => {
     blob.text().then((t) => setText(t));
@@ -123,12 +179,19 @@ const TxtView = forwardRef<ViewHandle, ViewProps>(function TxtView(
     selection: () => {
       const sel = window.getSelection();
       const t = sel?.toString().trim();
-      if (!t) return null;
-      const r = sel!.getRangeAt(0).getBoundingClientRect();
+      const content = contentRef.current;
+      if (!t || !sel || sel.rangeCount === 0 || !content) return null;
+      const range = sel.getRangeAt(0);
+      if (!content.contains(range.commonAncestorContainer)) return null;
+      const r = range.getBoundingClientRect();
+      const before = range.cloneRange();
+      before.selectNodeContents(content);
+      before.setEnd(range.startContainer, range.startOffset);
+      const leadingWhitespace = sel.toString().length - sel.toString().trimStart().length;
       const host = scrollerRef.current?.getBoundingClientRect();
       return {
         text: t,
-        location: String(text.indexOf(t)),
+        location: String(before.toString().length + leadingWhitespace),
         rect: {
           top: r.top - (host?.top ?? 0),
           left: r.left - (host?.left ?? 0),
@@ -197,7 +260,7 @@ const TxtView = forwardRef<ViewHandle, ViewProps>(function TxtView(
             : typography
         }
       >
-        {text}
+        {markedText}
       </div>
     </div>
   );
