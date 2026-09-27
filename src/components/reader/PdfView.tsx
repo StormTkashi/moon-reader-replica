@@ -7,12 +7,14 @@ import type { SearchHit, TocItem, ViewHandle, ViewProps } from "./types";
 type AnyDoc = any;
 
 const PdfView = forwardRef<ViewHandle, ViewProps>(function PdfView(
-  { blob, initialLocation, onProgress, onToc, onTap },
+  { blob, initialLocation, highlights, onProgress, onToc, onTap },
   ref,
 ) {
   const docRef = useRef<AnyDoc>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const textRef = useRef<HTMLDivElement>(null);
+  const [rendered, setRendered] = useState(0);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(Number(initialLocation) || 1);
   const settings = useReaderSettings();
@@ -76,8 +78,27 @@ const PdfView = forwardRef<ViewHandle, ViewProps>(function PdfView(
       canvas.width = viewport.width;
       canvas.height = viewport.height;
       canvas.style.width = `${viewport.width / 2}px`;
+      canvas.style.height = `${viewport.height / 2}px`;
       const ctx = canvas.getContext("2d")!;
       await p.render({ canvasContext: ctx, viewport }).promise;
+      if (cancelled) return;
+      // camada de texto invisível para permitir selecionar
+      const layer = textRef.current;
+      if (layer) {
+        layer.innerHTML = "";
+        const cssViewport = p.getViewport({ scale: scale / 2 });
+        layer.style.width = `${cssViewport.width}px`;
+        layer.style.height = `${cssViewport.height}px`;
+        layer.style.setProperty("--scale-factor", String(scale / 2));
+        const pdfjs = await import("pdfjs-dist");
+        const tl = new pdfjs.TextLayer({
+          textContentSource: await p.getTextContent(),
+          container: layer,
+          viewport: cssViewport,
+        });
+        await tl.render();
+        if (!cancelled) setRendered((n) => n + 1);
+      }
       onProgressRef.current(doc.numPages ? page / doc.numPages : 0, String(page), `${page}/${doc.numPages}`);
     })();
     return () => {
@@ -96,6 +117,18 @@ const PdfView = forwardRef<ViewHandle, ViewProps>(function PdfView(
       setPage(Math.min(Math.max(Math.round(pct * (total || 1)), 1), total || 1)),
     currentLocation: () => String(page),
     scrollBy: (px: number) => containerRef.current?.scrollBy(0, px),
+    selection: () => {
+      const sel = window.getSelection();
+      const layer = textRef.current;
+      if (!sel || sel.isCollapsed || !layer || !sel.rangeCount) return null;
+      const range = sel.getRangeAt(0);
+      if (!layer.contains(range.commonAncestorContainer)) return null;
+      const text = sel.toString().trim();
+      if (!text) return null;
+      const r = range.getBoundingClientRect();
+      return { text, location: String(page), rect: { top: r.top, left: r.left, width: r.width, height: r.height } };
+    },
+    clearSelection: () => window.getSelection()?.removeAllRanges(),
     search: async (query: string) => {
       const doc = docRef.current;
       if (!doc || !query) return [];
@@ -117,8 +150,38 @@ const PdfView = forwardRef<ViewHandle, ViewProps>(function PdfView(
     },
   }));
 
+  // pinta os trechos marcados nesta página
+  useEffect(() => {
+    const layer = textRef.current;
+    if (!layer) return;
+    const spans = Array.from(layer.querySelectorAll("span")) as HTMLSpanElement[];
+    spans.forEach((sp) => {
+      sp.style.background = "";
+      sp.style.borderBottom = "";
+    });
+    const colors: Record<string, string> = {
+      yellow: "rgba(250,204,21,.45)", green: "rgba(74,222,128,.45)", blue: "rgba(96,165,250,.45)",
+      pink: "rgba(244,114,182,.45)", purple: "rgba(192,132,252,.45)", orange: "rgba(251,146,60,.45)",
+    };
+    const norm = (t: string) => t.replace(/\s+/g, " ").trim();
+    for (const h of highlights ?? []) {
+      if (String(h.location) !== String(page) || !h.text) continue;
+      const target = norm(h.text);
+      const c = colors[h.color as string] ?? "rgba(250,204,21,.45)";
+      spans.forEach((sp) => {
+        const t = norm(sp.textContent ?? "");
+        if (t.length > 1 && (target.includes(t) || t.includes(target))) {
+          sp.style.background = c;
+        }
+      });
+    }
+  }, [highlights, page, rendered]);
+
   const tap = useTapZones(
-    onTap,
+    (zone) => {
+      if (window.getSelection()?.toString()) return;
+      onTap(zone);
+    },
     (dir) => go(dir === "left" ? 1 : -1),
     settings.swipeGesture,
   );
@@ -130,7 +193,10 @@ const PdfView = forwardRef<ViewHandle, ViewProps>(function PdfView(
       style={{ background: theme.bg, padding: settings.margin }}
       {...tap}
     >
-      <canvas ref={canvasRef} className="mx-auto block" />
+      <div className="relative mx-auto w-fit">
+        <canvas ref={canvasRef} className="block" />
+        <div ref={textRef} className="pdf-text-layer" />
+      </div>
     </div>
   );
 });

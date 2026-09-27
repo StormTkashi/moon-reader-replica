@@ -254,3 +254,9 @@
     inset 0 -3px 4px rgba(0, 0, 0, 0.5),
     0 14px 18px rgba(0, 0, 0, 0.55);
 }
+
+/* camada de texto do PDF (seleção) */
+.pdf-text-layer { position: absolute; inset: 0; overflow: hidden; line-height: 1; text-align: initial; transform-origin: 0 0; z-index: 2; user-select: text; -webkit-user-select: text; }
+.pdf-text-layer span, .pdf-text-layer br { color: transparent; position: absolute; white-space: pre; cursor: text; transform-origin: 0% 0%; }
+.pdf-text-layer ::selection { background: rgba(59,130,246,.35); }
+.pdf-text-layer .endOfContent { display: block; position: absolute; inset: 100% 0 0; z-index: -1; user-select: none; }
