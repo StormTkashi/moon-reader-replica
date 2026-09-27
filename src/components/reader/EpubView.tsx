@@ -65,6 +65,9 @@ const EpubView = forwardRef<ViewHandle, ViewProps>(function EpubView(
       });
 
       rendition.on("click", (e: MouseEvent) => {
+        const view = (e.view ?? null) as Window | null;
+        // não vira página se o usuário estiver selecionando texto (toque longo)
+        if (view?.getSelection?.()?.toString().trim()) return;
         const w = hostRef.current?.clientWidth ?? 1;
         const rel = e.clientX / w;
         onTapRef.current(rel < 0.3 ? "left" : rel > 0.7 ? "right" : "center");
