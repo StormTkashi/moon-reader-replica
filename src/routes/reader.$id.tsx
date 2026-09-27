@@ -345,6 +345,7 @@ function ReaderPage() {
               ref={viewRef}
               blob={blob}
               initialLocation={loc || book.location}
+              highlights={highlights}
               onProgress={onProgress}
               onToc={setToc}
               onTap={(zone) =>

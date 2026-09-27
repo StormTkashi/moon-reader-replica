@@ -6,7 +6,7 @@ import type { SearchHit, TocItem, ViewHandle, ViewProps } from "./types";
 type AnyBook = any;
 
 const EpubView = forwardRef<ViewHandle, ViewProps>(function EpubView(
-  { blob, initialLocation, onProgress, onToc, onTap },
+  { blob, initialLocation, highlights, onProgress, onToc, onTap },
   ref,
 ) {
   const hostRef = useRef<HTMLDivElement>(null);
@@ -118,6 +118,62 @@ const EpubView = forwardRef<ViewHandle, ViewProps>(function EpubView(
       /* noop */
     }
   }, [settings.pageMode, ready]);
+
+  // Mantém as marcações salvas visíveis no texto, inclusive ao reabrir o livro.
+  useEffect(() => {
+    const rendition = renditionRef.current;
+    if (!rendition || !ready) return;
+
+    const applied: { location: string; type: "highlight" | "underline" }[] = [];
+    highlights.forEach((highlight) => {
+      if (!highlight.location) return;
+      const type = highlight.style === "underline" ? "underline" : "highlight";
+      const color = {
+        yellow: "#f2c14e",
+        green: "#7bbf6a",
+        blue: "#6aa7d8",
+        pink: "#e08aa8",
+        purple: "#a78bd8",
+      }[highlight.color];
+
+      try {
+        if (type === "underline") {
+          rendition.annotations.underline(
+            highlight.location,
+            { id: highlight.id },
+            undefined,
+            `reader-mark-${highlight.id}`,
+            { stroke: color, "stroke-opacity": "0.95", "stroke-width": "2" },
+          );
+        } else {
+          rendition.annotations.highlight(
+            highlight.location,
+            { id: highlight.id },
+            undefined,
+            `reader-mark-${highlight.id}`,
+            {
+              fill: color,
+              "fill-opacity": highlight.bold ? "0.72" : "0.5",
+              "mix-blend-mode": "multiply",
+            },
+          );
+        }
+        applied.push({ location: highlight.location, type });
+      } catch {
+        /* marcação incompatível com esta edição do livro */
+      }
+    });
+
+    return () => {
+      applied.forEach(({ location, type }) => {
+        try {
+          rendition.annotations.remove(location, type);
+        } catch {
+          /* noop */
+        }
+      });
+    };
+  }, [highlights, ready]);
 
   useImperativeHandle(ref, () => ({
     next: () => renditionRef.current?.next(),
