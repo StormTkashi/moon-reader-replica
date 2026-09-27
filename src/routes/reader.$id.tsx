@@ -274,16 +274,19 @@ function ReaderPage() {
     setSelection(null);
   }
 
+  const lastSelRef = useRef(0);
   // observa a seleção de texto para mostrar a barrinha de marcação
   useEffect(() => {
     const timer = setInterval(() => {
       const sel = viewRef.current?.selection?.();
       if (sel?.text && sel.rect && sel.rect.width + sel.rect.height > 0) {
+        lastSelRef.current = Date.now();
         setSelection({ text: sel.text, location: sel.location, rect: sel.rect });
       } else {
-        setSelection((prev) => (prev ? null : prev));
+        // mantém a barra por um instante (no celular o toque no botão limpa a seleção)
+        setSelection((prev) => (prev && Date.now() - lastSelRef.current > 1500 ? null : prev));
       }
-    }, 350);
+    }, 300);
     return () => clearInterval(timer);
   }, [book]);
 

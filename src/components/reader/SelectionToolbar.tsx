@@ -30,13 +30,20 @@ export function SelectionToolbar({
   onHighlight: () => void;
   onNote: () => void;
 }) {
-  const top = Math.max(8, rect.top - 96);
+  // no celular o menu nativo do Android fica em cima; colocamos a barra embaixo
+  const touch = typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches;
+  const below = rect.top + rect.height + 16;
+  const top = touch
+    ? Math.min(below, window.innerHeight - 120)
+    : Math.max(8, rect.top - 96);
   const left = Math.max(8, Math.min(rect.left + rect.width / 2 - 140, window.innerWidth - 296));
 
   return (
     <div
       className="absolute z-40 w-[280px] animate-scale-in rounded-xl border border-border bg-popover text-popover-foreground shadow-xl"
       style={{ top, left }}
+      onPointerDown={(e) => e.preventDefault()}
+      onMouseDown={(e) => e.preventDefault()}
     >
       {/* estilo da marcação */}
       <div className="flex items-center gap-1.5 border-b border-border px-2 py-2">
