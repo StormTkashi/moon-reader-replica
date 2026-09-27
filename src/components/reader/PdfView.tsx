@@ -16,7 +16,7 @@ const PdfView = forwardRef<ViewHandle, ViewProps>(function PdfView(
   const textRef = useRef<HTMLDivElement>(null);
   const [rendered, setRendered] = useState(0);
   const [total, setTotal] = useState(0);
-  const [page, setPage] = useState(Number(initialLocation) || 1);
+  const [page, setPage] = useState(parseInt(initialLocation) || 1);
   const settings = useReaderSettings();
   const theme = resolveTheme(settings);
   const onProgressRef = useRef(onProgress);
@@ -112,7 +112,7 @@ const PdfView = forwardRef<ViewHandle, ViewProps>(function PdfView(
   useImperativeHandle(ref, () => ({
     next: () => go(1),
     prev: () => go(-1),
-    goTo: (href: string) => setPage(Math.min(Math.max(Number(href) || 1, 1), total || 1)),
+    goTo: (href: string) => setPage(Math.min(Math.max(parseInt(href) || 1, 1), total || 1)),
     goToPercent: (pct: number) =>
       setPage(Math.min(Math.max(Math.round(pct * (total || 1)), 1), total || 1)),
     currentLocation: () => String(page),
@@ -126,7 +126,16 @@ const PdfView = forwardRef<ViewHandle, ViewProps>(function PdfView(
       const text = sel.toString().trim();
       if (!text) return null;
       const r = range.getBoundingClientRect();
-      return { text, location: String(page), rect: { top: r.top, left: r.left, width: r.width, height: r.height } };
+      // guarda a posição exata do trecho (relativa à página) para pintar depois
+      const lr = layer.getBoundingClientRect();
+      const parts = Array.from(range.getClientRects())
+        .filter((c) => c.width > 1 && c.height > 1)
+        .map((c) =>
+          [(c.left - lr.left) / lr.width, (c.top - lr.top) / lr.height, c.width / lr.width, c.height / lr.height]
+            .map((n) => n.toFixed(4))
+            .join(","),
+        );
+      return { text, location: `${page}|${parts.join(";")}`, rect: { top: r.top, left: r.left, width: r.width, height: r.height } };
     },
     clearSelection: () => window.getSelection()?.removeAllRanges(),
     search: async (query: string) => {
@@ -150,32 +159,21 @@ const PdfView = forwardRef<ViewHandle, ViewProps>(function PdfView(
     },
   }));
 
-  // pinta os trechos marcados nesta página
-  useEffect(() => {
-    const layer = textRef.current;
-    if (!layer) return;
-    const spans = Array.from(layer.querySelectorAll("span")) as HTMLSpanElement[];
-    spans.forEach((sp) => {
-      sp.style.background = "";
-      sp.style.borderBottom = "";
+  const colors: Record<string, string> = {
+    yellow: "rgba(242,193,78,.45)", green: "rgba(123,191,106,.45)", blue: "rgba(106,167,216,.45)",
+    pink: "rgba(224,138,168,.45)", purple: "rgba(167,139,216,.45)",
+  };
+  const marks = (highlights ?? []).flatMap((h) => {
+    const [pg, rects] = String(h.location).split("|");
+    if (parseInt(pg ?? "") !== page || !rects) return [];
+    const bg = colors[h.color as string] ?? "rgba(242,193,78,.45)";
+    const underline = (h as { style?: string }).style === "underline";
+    return rects.split(";").map((r, i) => {
+      const [x, y, w, hh] = r.split(",").map(Number);
+      return { key: `${h.id}-${i}`, x: x ?? 0, y: y ?? 0, w: w ?? 0, h: hh ?? 0, bg, underline };
     });
-    const colors: Record<string, string> = {
-      yellow: "rgba(250,204,21,.45)", green: "rgba(74,222,128,.45)", blue: "rgba(96,165,250,.45)",
-      pink: "rgba(244,114,182,.45)", purple: "rgba(192,132,252,.45)", orange: "rgba(251,146,60,.45)",
-    };
-    const norm = (t: string) => t.replace(/\s+/g, " ").trim();
-    for (const h of highlights ?? []) {
-      if (String(h.location) !== String(page) || !h.text) continue;
-      const target = norm(h.text);
-      const c = colors[h.color as string] ?? "rgba(250,204,21,.45)";
-      spans.forEach((sp) => {
-        const t = norm(sp.textContent ?? "");
-        if (t.length > 1 && (target.includes(t) || t.includes(target))) {
-          sp.style.background = c;
-        }
-      });
-    }
-  }, [highlights, page, rendered]);
+  });
+  void rendered;
 
   const tap = useTapZones(
     (zone) => {
@@ -195,6 +193,23 @@ const PdfView = forwardRef<ViewHandle, ViewProps>(function PdfView(
     >
       <div className="relative mx-auto w-fit">
         <canvas ref={canvasRef} className="block" />
+        <div className="pointer-events-none absolute inset-0 z-[1]">
+          {marks.map((m) => (
+            <div
+              key={m.key}
+              className="absolute"
+              style={{
+                left: `${m.x * 100}%`,
+                top: `${m.y * 100}%`,
+                width: `${m.w * 100}%`,
+                height: `${m.h * 100}%`,
+                background: m.underline ? "transparent" : m.bg,
+                borderBottom: m.underline ? `2px solid ${m.bg.replace(".45", "1")}` : undefined,
+                mixBlendMode: "multiply",
+              }}
+            />
+          ))}
+        </div>
         <div ref={textRef} className="pdf-text-layer" />
       </div>
     </div>
