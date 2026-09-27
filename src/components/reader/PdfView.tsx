@@ -167,7 +167,7 @@ const PdfView = forwardRef<ViewHandle, ViewProps>(function PdfView(
     for (const h of highlights ?? []) {
       if (String(h.location) !== String(page) || !h.text) continue;
       const target = norm(h.text);
-      const c = colors[h.color as string] ?? colors.yellow;
+      const c = colors[h.color as string] ?? "rgba(250,204,21,.45)";
       spans.forEach((sp) => {
         const t = norm(sp.textContent ?? "");
         if (t.length > 1 && (target.includes(t) || t.includes(target))) {
